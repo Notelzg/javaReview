@@ -1,0 +1,1019 @@
+1， 
+# poi读取excell  poI 读取excell单元格公式的计算的具体值
+##  但是有缺陷，有些公式无法无法读取值，比如字符串连接函数 CONCATENATE
+```
+// poI 读取excell单元格公式值
+cell.getNumericCellValue()
+// poI 读取excell单元格公式
+cell.getCellFormula()
+                    }
+```
+##  整体的代码
+
+```
+// 根据Workbook得到第0个下标的工作薄
+Sheet sheet = _workbook.getSheetAt(sheetIdx);
+// 遍历工作薄中的所有行,注意该foreach只有Java5或者以上才支持
+for (Row row : sheet) {
+    // 遍历行中的所有单元格 Java5+ 才能使用
+    for (Cell cell : row) {
+        // 单元格的参照 ,根据行和列确定某一个单元格的位置
+        CellReference cellRef = new CellReference(row.getRowNum(), cell.getColumnIndex());
+        // 得到单元格类型
+        String value = null;
+        // 这是一个自己写的实体类，用来存储取出来的数据
+        CellModel cm = new CellModel();
+        cm.setSheetName(sheet.getSheetName());
+        cm.setReference(cellRef.formatAsString());
+        String key = cm.getFullReference();
+
+        switch (cell.getCellType()) {
+        case Cell.CELL_TYPE_NUMERIC:// 数字类型
+            cm.setCellType("2");// 常量
+            // 检查单元格是否包含一个Date类型
+            // 仅仅只检查Excel内部的日期格式,
+            if (DateUtil.isCellDateFormatted(cell)) {
+                // 输出日期
+                Date date = cell.getDateCellValue();
+                value = String.valueOf(DateFormat.getFullDatetimeFormatter().format(date));
+            } else {
+                // 输出数字
+                value = String.valueOf(cell.getNumericCellValue());
+            }
+            cm.setFormula(value);
+            rtn.put(key, cm);
+            break;
+        case Cell.CELL_TYPE_STRING:// 字符类型
+            cm.setCellType("2");// 常量
+            value = cell.getStringCellValue();
+            cm.setFormula(value);
+            rtn.put(key, cm);
+            break;
+        case Cell.CELL_TYPE_FORMULA:// 公式
+            cm.setCellType("1");// 公式
+            cm.setFormula(cell.getCellFormula());
+
+            String tanslate = translateFormula(cell, cm.getFormula());
+            cm.setAviatorFormula(tanslate);
+            try {
+                /* 如果是公式的话，取一下公式的计算值, 为了对比模型计算值和Excel计算值是否一致 */
+                cm.setFormula(String.valueOf(cell.getNumericCellValue()));
+            } catch (Exception e) {
+                // continue;
+            }
+            if (tanslate != null) {
+                // String key = cm.getFullReference();
+                rtn.put(key, cm);
+            }
+            break;
+        default:
+        }
+    }
+}
+
+```
+2,
+#  postgres数据库替换语法
+## ^(1/4） 替换为 ^0.25
+```
+
+UPDATE model_struct 
+SET aviator_formula = REPLACE ( aviator_formula, '^(1/4)', '^0.25' ) 
+WHERE
+	aviator_formula LIKE '%^(1/4)%'
+
+```
+3，
+# fastjson  的使用
+##  官网 
+https://github.com/alibaba/fastjson/wiki
+这里可以查看，自己的项目依赖该项目。
+## jsonpath
+https://github.com/alibaba/fastjson/wiki/JSONPath
+可以获取任意路径下的任何格式的数据。
+## 实体类和jsonString，互转
+entity 是一个实体类的对象
+```
+import com.alibaba.fastjson.JSON;
+String jsonString = JSON.toJSONString(entity);
+System.out.println(jsonString);
+
+String jsonString = ...;
+entity = JSON.parseObject(jsonString, Entity.class);
+
+```
+## jsonarray转listArray
+```
+line = {"result":[{"count":0,"name":"自身风险","list":[],"type":1}], "arr2":[["e":0], ["e":1]]}
+JSONObject jsonObject = JSON.parseObject(line);
+JSONArray nameList = (JSONArray) JSONPath.eval(jsonObject, "$.result");
+```
+## jsonString 转多维维数组
+```
+line = {"result":[[{"count":0,"name":"自身风险","list":[],"type":1}]}
+JSONObject jsonObject = JSON.parseObject(line);
+//取出第一层
+JSONArray nameList = (JSONArray) JSONPath.eval(jsonObject, "$.result");
+// 写个for循环，依次取出nameList中的jsonarray
+JSONObject nameObject = (JSONObject) JSONPath.eval(jsonObject, "$.arr2");
+
+```
+## jsonString 取出任意的元素
+不通过实体类, 3层for循环
+```
+            JSONObject jsonObject = JSON.parseObject(line);
+            JSONArray nameList = (JSONArray) JSONPath.eval(jsonObject, "$.result");
+            for (Iterator iterator = nameList.iterator(); iterator.hasNext(); ) {
+                JSONObject tagObject = (JSONObject) iterator.next();
+                JSONArray tagList = tagObject.getJSONArray("list");
+//				if (tagList != null && !tagList.isEmpty()){
+                for (Iterator iteratort = tagList.iterator(); iteratort.hasNext(); ) {
+                    JSONObject riskbject = (JSONObject) iteratort.next();
+                    JSONArray riskList = riskbject.getJSONArray("list");
+                    for (Iterator iteratort1 = riskList.iterator(); iteratort1.hasNext(); ) {
+                        JSONObject childbject = (JSONObject) iteratort1.next();
+                        Object title = childbject.get("title");
+                        Object id =   childbject.get("id");
+                    }
+
+                }
+			}
+
+```
+
+4， js ajax http content 属性
+
+4 ， 
+# maven profile 和 spring boot profile的区别，
+## stckoverflow上面的一个答案，很nice
+https://stackoverflow.com/questions/11869064/maven-profiles-or-spring-profiles
+maven profile 是在build time
+spring boot profile， runtime 
+## maven profile 使用场景
+如果你只需生成不同的jar包，由于生产环境、测试环境，开发环境的不同，则使用maven profile
+进行配置，可以根据不同的环境，包含和不包含配置文件。
+## spring boot profile 使用场景
+如果你需要master的部署，生产环境、测试环境，开发环境并没有什么不同，则  使用spring boot ，
+打包一次，但是可以在多个环境部署。
+spring boot profile,适用不同profile的命令行，适应于master deploy
+java -jar D:\share\package\evaluation-service-0.0.1-SNAPSHOT.jar --spring.profiles.active=uat
+## maven profile 在yml文件中的多环境配置
+[在pom文件的build中配置](https://mp.csdn.net/mdeditor/84196356#)
+## spring boot profile 配置
+```
+//application.yml文件存放通用配置。下面三个文件分别对应，开发，测试，生产环境
+//application-dev.yml application-uat.yml application-prod.yml
+spring:
+  profiles:
+    active:
+#通过java -jar 命令启动的时候通过使用 --spring.profiles.active=uat、dev、prod，运行不同的配置文件，可以选择多个用，号隔开
+# java -jar D:\share\package\evaluation-service-0.0.1-SNAPSHOT.jar --spring.profiles.active=uat
+    - dev
+#    - uat
+#    - prod
+```
+5， 
+# maven profile 配置
+//application.yml文件存放通用配置。下面三个文件分别对应，开发，测试，生产环境
+//application-dev.yml application-uat.yml application-prod.yml
+## 1， application.yml
+```
+spring:
+  profiles:
+    active:
+#打包时需要修改此属性，需区分引用dev uat prod等环境的配置文件
+    -  @profileActive@
+```
+## 2, pom.xml
+
+```
+<!--配置多环境打包-->
+	<profiles>
+		<!--开发环境-->
+		<profile>
+			<id>dev</id>
+			<properties>
+				<build.profile.id>dev</build.profile.id>
+				<profileActive>dev</profileActive>
+			</properties>
+			<activation>
+				<!--如果不指定，则默认使用dev开发环境配置-->
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<!-- 测试环境-->
+		<profile>
+			<id>uat</id>
+			<properties>
+				<build.profile.id>uat</build.profile.id>
+				<profileActive>uat</profileActive>
+			</properties>
+		</profile>
+		<!--生产环境-->
+		<profile>
+			<id>prod</id>
+			<properties>
+				<build.profile.id>prod</build.profile.id>
+				<profileActive>prod</profileActive>
+			</properties>
+		</profile>
+	</profiles>
+
+	<build>
+		<!-- profile对资源的操作 -->
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<excludes>
+					 <!--在打包的时候先去掉所有的yml文件-->
+					<exclude>application*.yml</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<!-- 是否替换@xx@表示的maven properties属性值 -->
+				<filtering>true</filtering>
+				<!--在打包的时候，根据-P参数，加上需要的yml配置文件-->
+				<includes>
+					<include>application.yml</include>
+					<include>application-${profileActive}.yml</include>
+				</includes>
+			</resource>
+		</resources>
+		<plugins>
+			
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+```
+
+## 3, 打包命令
+```
+// -P 后面的uat、prod、dev会自动打包相应的配置文件到jar包中。
+mvn clean install -DskipTests -P uat
+```
+## 4， 结论，
+```
+maven profile 是在build time 生成，生成的jar包是不一样的。
+```
+网上看的，适用于由于生产环境、测试环境，开发环境的服务器配置不同。
+
+5， 
+# sql语句
+## 删除重复的行
+```
+ DELETE from t_holders a where (a.hid,a.company_id) in (select hid,company_id  from t_holders group by hid,company_id having count(*) > 1)
+ and id not in (select min(id) from t_holders group by hid,company_id having count(*)>1)
+```
+
+6，
+# echarts 自动生成配置
+## 使用场景
+echarts 图形y轴一般情况下只有一条，但是X轴可能有n（0、1、2...）条,如果需要大量重复的图形，但是只是X轴的条数不一样的
+通过传递的二维数组判断X轴的条数，生成相应的配置，而不用为X轴的不同而写echarts的不同的option，前提是项目中需要大量
+echats图的基础。由于项目中只是用了折线图、堆叠柱状图，堆叠面积图，所以我只实现了这几个图形的自动生成，如果需要别的自己
+写根据已有的写一下，很简单，就是生成一个json数组就可以。
+## code implement
+```
+
+/*** 自动生成echarts的option，主要是针对Y轴的生成做了，优化，
+ * 根据Y轴的数据，自动生成Y轴的配置数组，每个形状的图形，做了一个
+ * 目前支持，堆叠柱状图,折线图，堆叠面积图
+ */
+/**
+ * @author zgli
+ * 堆叠柱状图
+ *@param divDom：图表元素的位置，DOM DIV元素
+ *@param colorArr：图例的颜色
+*/
+/**
+ *
+ * @param divDom  图表元素的位置，DOM DIV元素
+ * @param titleArray  图表元素的名称数组，按照图元素显示的顺序
+ * @param colorArr 图表元素的颜色数组，按照图元素显示的顺序
+ * @param yAxisName  该图表Y轴的名称，在图表的左上角显示
+ * @param valueArray  这是一个数组（二维），第一个元素是X轴，其他的是Y轴
+ *  最后一个元素是差异线条，其他的数据元素是柱状图的柱。
+ */
+function echartsStackedColumn(divDom, titleArray,colorArr,yAxisName,valueArray){
+    /* 生成y轴的 serial 数组*/
+    var ySeries = [] ;
+    /* y轴数据的，柱状数据 */
+    for(var i = 0; i < titleArray.length -1; i++){
+        var temp = {"name":titleArray[i]
+            ,"type":"bar"
+            ,"label":{ "show": true, "position": "inside"}
+            ,"data": valueArray[i + 1]
+        }
+        ySeries.push(temp);
+    }
+    /* 生成差异分析的线条, 数组最后一个元素 */
+    var diffLine = {
+        "name" :'差异',
+        "type" :'line',
+        
+        "label" : { "normal": { "show": true, "position": 'top' } },
+        "itemStyle" : { "normal" : { "lineStyle":{ "color":'#ff0000' } } },
+        "data":valueArray[valueArray.length - 1]
+    }
+    ySeries.push(diffLine);
+    /* y轴配置，结束  */
+    /* 初始化 echarts 的  dom */
+    var Dom = divDom;
+    var myChart = echarts.init(Dom);
+
+    /* echarts option */
+    var app = {};
+    option = null;
+    app.title = '堆叠柱状图';
+
+    option = {
+        tooltip : {
+            trigger: 'axis',
+            axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            }
+        },
+        legend: {
+            data: titleArray
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        color:colorArr,//通过形参传入图例的颜色
+        xAxis : [
+            {
+                type : 'category',
+                data : valueArray[0]
+//            	data :['2018','2019','2020','2021','2022']
+            }
+        ],
+        yAxis : [
+            {
+                type: 'value',
+                //name: '经营现金流入',
+                name: yAxisName,//通过形参传入该值
+            },
+            {
+                type: 'value',
+                name: '',
+            }
+        ],
+        series : ySeries
+        ,dataZoom: [{}],//初始化滚动条
+    };
+    ;
+    if (option && typeof option === "object") {
+        myChart.setOption(option, true);
+    }
+    console.log("差异分析Echarts图表初始化完成："+yAxisName);
+};
+///* 堆叠状图结束 */
+
+/**
+ * 堆叠面积图
+ * @author zgli
+ * @param divDom  图表元素的位置，DOM DIV元素
+ * @param titleArray  图表元素的名称数组，按照图元素显示的顺序
+ * @param colorArr 图表元素的颜色数组，按照图元素显示的顺序
+ * @param yAxisName  该图表Y轴的名称，在图表的左上角显示
+ * @param valueArray  这是一个数组（二维），第一个元素是X轴，其他的是Y轴
+ *  最后一个元素是差异线条，其他的数据元素是面积图的面积。
+ */
+function echartsStackedArea(divDom, titleArray,colorArr,yAxisName,valueArray){
+    /* 生成y轴的 serial 数组*/
+    var ySeries = [] ;
+    /* y轴数据的，柱状数据 */
+    for(var i = 0; i < titleArray.length - 1; i++){
+        var temp =  {
+            "name" : titleArray[i],
+            "type" :'line',
+           
+            "areaStyle" : {"normal": {}},
+            "data" : valueArray[i + 1]
+        };
+        ySeries.push(temp);
+    }
+    /* 生成差异分析的线条, 数组最后一个元素 */
+   var finalLine = {
+        "name" :'净利润',
+        "type" :'line',
+        
+        "label" : { "normal" : { "show" : true, "position" : 'top' } },
+        "areaStyle": { "normal": {}},
+        "data" : valueArray[valueArray.length - 1]
+    };
+   ySeries.push(finalLine);
+   /* 初始化 y 轴 完成  */
+
+    var myCharscost = echarts.init(divDom);
+    option = {
+        title: {
+            text: yAxisName,
+            x:'center'
+        },
+        tooltip : {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross',
+                label: {
+                    backgroundColor: '#6a7985'
+                }
+            }
+        },
+        legend: {
+            // data:['付现成本','折旧摊销','利息费用','所得税','净利润']
+            data: titleArray,
+            x:'center',
+            padding:40,
+            itemGap: 5,//图例间距
+            //y:'bottom'
+        },
+        color: colorArr,
+        toolbox: {
+            feature: {
+                saveAsImage: {}
+            }
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+        },
+        xAxis : [
+            {
+                type : 'category',
+                boundaryGap : false,
+                //data : ['2019','2020','2021','2022','2023','2024','2025']
+                data :  valueArray[0]
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value',
+                // name: '成本构成表',
+                //name: yAxisName,
+            }
+        ],
+        series : ySeries,
+        dataZoom: [{}],
+    };
+    myCharscost.setOption(option);
+};
+///*成本构成表结束*/
+
+/**
+ * 折线图
+ * @author zgli
+ * @param divDom  图表元素的位置，DOM DIV元素
+ * @param titleArray  图表元素的名称数组，按照图元素显示的顺序
+ * @param colorArr 图表元素的颜色数组，按照图元素显示的顺序
+ * @param yAxisName  该图表Y轴的名称，在图表的左上角显示
+ * @param valueArray  这是一个数组（二维），第一个元素是X轴，其他的是Y轴
+ *  最后一个元素是差异线条，其他的数据元素是面积图的面积。
+ */
+function echartsLine(divDom, titleArray,colorArr,yAxisName,valueArray){
+    /* 生成y轴的 serial 数组*/
+    var ySeries = [] ;
+    /* y轴数据的，柱状数据 */
+    for(var i = 0; i < titleArray.length; i++){
+        var temp = {
+            "name" :  titleArray[i],
+            "type" : 'line',
+            "data" : valueArray[i + 1]
+        };
+        ySeries.push(temp);
+    }; /* 初始化 y 轴 完成  */
+        var myCharloan = echarts.init(divDom);
+        option = {
+            title: {
+                text: yAxisName,
+                x:'center'
+            },
+            // color: ['#D53A35', '#E98F6F', '#6AB0B8', '#334B5C'],
+            color: colorArr,
+            // title: {
+            //    text:
+            // },
+            tooltip: {
+                trigger: 'axis',
+                //formatter: "{b} <br> 合格率: {c}%"
+            },
+            legend: {
+                data: titleArray,
+                x:'center',
+                padding:40
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            xAxis: {
+                type: 'category',
+                name: '日期',
+                boundaryGap: false,
+                data: valueArray[0]
+                //data: ['5.1', '5.2', '5.3', '5.4', '5.5', '5.6', '5.7']
+            },
+            yAxis: {
+                type: 'value',
+                //name: yAxisName,
+            },
+            series: ySeries,
+            dataZoom: [{}]
+        };
+        myCharloan.setOption(option);
+};
+//结束
+
+```
+
+
+7，
+#获取数据的一些工具类
+## 使用场景
+由于项目中有大量的echats图形，而初始化echats的数据来自一个map或者几个map，或者map数组
+而echarts的多条Y轴key是不一样的，而且key比较多，key被配置成常量数组从map、数组中取数据。
+## example
+会用到一个数据格式化函数，详情请点击
+
+```
+/**
+ * 获取需要的数据
+ * @param keyArr 需要用到的key数组，这个是根据每个模型配置的常量数组
+ * @param keyPropertyArr   key是一个json结构 key = {"value": "1", ...}
+ * @param resultMap 数据集
+ * @param mapPropertyArr  resultMap 中包含子map，属性数组
+ * @param operation  "差异分析数据，需要进行的操作：目前只支持+ - * / 操作
+ * @returns {Array} 根据key的属性，返回相应key属性的二维数组。
+*
+* 该函数数据通过 + - * / 的运算得到
+*/
+function getDate2(keyArr, keyPropertyArr1, keyPropertyArr2, operation, data, mapPropertyArr, conPropertyArr, condition) {
+    //净额=流出-流入
+    var valueArray1 = getValueArray3(DifConstants.netamountCellArray, keyPropertyArr1, data, mapPropertyArr);
+    var valueArray2 = getValueArray3(DifConstants.netamountCellArray, keyPropertyArr2, data, mapPropertyArr);
+    /* 年*/
+    var valueArray = [valueArray1[0]];
+    /*获取经评报告，复盘报告 值净额 */
+    for (var i = 1; i < valueArray2.length; i++) {
+        valueArray.push(getValueArrayOperation(valueArray2[i], valueArray1[i], operation));
+    }
+    /* 获取实际值净额 */
+    var actualValue = getValueArrayCondition(conPropertyArr, data[condition], arrayValueFormat(valueArray[0], "年", 0 , 0));
+    valueArray[1] = arrayValueFormat(actualValue[1],"" , 2, 0);
+    //差异值
+    valueArray.push(getValueArrayOperation(valueArray[3], valueArray[1], "-"));
+    return valueArray;
+};
+/**
+* echars 初始化
+*/
+function echartsInit(valueArray, yAxisName, divName) {
+    /* 对数组数据进行，格式化 */
+    valueArray[0] = arrayValueFormat(valueArray[0], "年", 2);
+    for (var i = 1; i < valueArray.length; i++) {
+        valueArray[i] = arrayValueFormat(valueArray[i], "", 2);
+    }
+    var domDiv = document.getElementById(divName);
+    var colorArr = ['#20b2aa', '#ffa07a', '#ff0000', '#ffff00'];//图例的颜色，分别对应[实际值，预测值，差异值]
+    var titleArray = ['实际值', '原值', '修改值', '差异'];
+    echartsStackedColumn(domDiv, titleArray, colorArr, yAxisName, valueArray);
+};
+
+/**
+ * 函数入口，main函数
+ * @param data 数据集合
+ */
+function echartsDrawModel_1(data) {
+      var keyProperty = ["year", "value", "value", "value"];
+       var mapProperty = ["replayMap", "outputMap", "outputMap", "replayMap"];
+       var pa = ["time", "businessIncome"];
+       var keyProperty1 = ["year", "value1", "value1", "value1"];
+       var keyProperty2 = ["year", "value2", "value2", "value2"];
+       pa = ["time", "netCashBusiness"];
+       valueArray = getDate2(DifConstants.netamountCellArray,  keyProperty1, keyProperty2,"-" , data, mapProperty, pa, "modelCashList");
+       echartsInit(valueArray, "经营活动现金流净额", "echarts_amount");
+}
+
+```
+## code 
+```
+
+/**
+ * 通过keyArray,获取valueMap中相应key的value
+ * @param keyArray  由key = {"year": "2018, "value" : "10"}  组成数组
+ * @param valueMap  values 的 map集合
+ * @param property  key的属性，year 或者 value
+ * @returns {Array}  由keyArray
+ */
+function getValueArray(keyArray, valueMap, property){
+    var valueArray = [];
+    for(var i=0;i<keyArray.length;i++){
+        var key = keyArray[i];
+        var value = valueMap[key[property]];//净利润，原值
+        valueArray.push(value);
+    }
+    return valueArray;
+}
+
+/**
+ * @param keyArray key的数组，key是一个json数据结构 suchas key = {"year": "2018, "value" : "10" , ...}
+ * @param valueMap  所有数据都在一个map中。
+ * @param propertyArray key的属性数组
+ * @returns {Array} 二维数组，第i行代表propertyArray[i[属性的所有数据，
+ */
+function getValueArray2(keyArray, propertyArray, valueMap){
+    var valueArray = [];
+    for(var i=0;i<propertyArray.length;i++){
+        var childArray = [];
+        for (var j = 0; j < keyArray.length; j ++) {
+            var key = keyArray[j];
+            var value = valueMap[key[propertyArray[i]]];//净利润，原值
+            childArray.push(value);
+        }
+        valueArray.push(childArray);
+    }
+    return valueArray;
+}
+
+/**
+ * 一个map由几个childMap组成，childMap的key一样，需要从每个childMap取出相同的key组成一个数组
+ * @param keyArray key的数组，keykey是一个json数据结构 suchas key = {"year": "2018, "value" : "10" , ...}
+ * @param valueMap  所有数据都在一个map中。
+ * @param keyPropertyArray key的属性数组 ["value1", "value2", ...]
+ * @param mapPropertyArray map的属性数组,map中包含map的情况
+ * such as : map = {"map0": {"value1": "1", "value2": "2"}, "map1": {}, "map2": {}, ...}
+  * @returns {Array} 二维数组，第i行代表, mapPropertyArray[i]中,
+ * keyArryay数组所有key的propertyArray[i[属性的数据，
+ * 注意：keyPropertyArray 和 mapPropertyArray 是一一对应关系
+ */
+function getValueArray3(keyArray, keyPropertyArray, valueMap,mapPropertyArray){
+    if (keyPropertyArray.length != mapPropertyArray.length){
+         console.error("keyPropertyArray ， mapPropertyArray length is not equal"+ keyPropertyArray + mapPropertyArray);
+         return;
+    }
+    var valueArray = [];
+    for(var i=0;i<keyPropertyArray.length;i++){
+        var childArray = [];
+        for (var j = 0; j < keyArray.length; j ++) {
+            var key = keyArray[j][keyPropertyArray[i]];
+            var value = valueMap[mapPropertyArray[i]][key];
+            childArray.push(value);
+        }
+        valueArray.push(childArray);
+    }
+    return valueArray;
+}
+
+/**
+ * 两个数组进行运算， v = v1 operation v1
+ * @param valueArray1   array of v1
+ * @param valueArray2   array of v2
+ * @param operation  type String : + - * /
+ * @returns {Array} array of v
+ */
+function getValueArrayOperation(valueArray1, valueArray2, operation){
+    var valueArray = [];
+    for(var i=0;i<Math.max(valueArray1.length, valueArray2.length);i++){
+        var v1 =  valueArray1[i];
+        var v2 =  valueArray2[i];
+        switch (operation) {
+            case "+":
+                valueArray.push(v1 + v2);
+                break;
+            case "-":
+                valueArray.push(v1 - v2);
+                break;
+            case "*":
+                valueArray.push(v1 * v2);
+                break;
+            case "/":
+                valueArray.push(v1 / v2);
+                break;
+        }
+    }
+    return valueArray;
+};
+
+/**
+ *  value是一个json数据结构 suchas value = {"year": "2018, "value" : "10" , ...}
+ * @param valueArray  由map of value 组成的数组
+ * @param propertyArray value的属性数组
+ * @returns {Array} 二维数组，第i行代表propertyArray[i[属性的所有数据，
+ */
+function getValueArrayTArray(propertyArray, valueArray){
+    var rs = [];
+    for(var i=0;i<propertyArray.length;i++){
+        var childArray = [];
+        for (var j = 0; j < valueArray.length; j ++) {
+            var value = valueArray[j];
+            var key = propertyArray[i];
+            childArray.push(value[key]);
+        }
+        rs.push(childArray);
+    }
+    return rs;
+};
+
+/**
+ *  遍历conditionArray判断valueArry中index下标的数组，如果相等则取出propertyArray中的值，
+ *  返回一个新的数组，数组长度是codnitionArray的长度
+ * @param conditionArray  条件数组，目前只能支持相等判断
+ * @param propertyArray propertyArray value的属性数组
+ * @param valueArray   由value组成的数组,value是一个json数据结构 suchas value = {"year": "2018, "value" : "10" , ...}
+ * @param index  valueArray 中作为判断条件的索引，从0开始，如果为null则设置为0
+ */
+// var pa = ["year", "value"];
+// var va = [{"year":"2016", "value":"1992"}, {"year":"2017", "value":"1993"}, {"year":"2019", "value":"1994"}];
+// var ca = ["2016", "2017", "2018", "2019", "2020"];
+// getValueArrayCondition(pa, va, ca, null);
+function getValueArrayCondition(propertyArray, valueArray, conditionArray, index) {
+    var rs = [];
+   valueArray = getValueArrayTArray(propertyArray, valueArray) ;
+   index = index == null? 0 : index;
+   var indexCondition = null;
+   var indexValue = null;
+   var valueCondition = null;
+   var valueValue = null;
+    for(var i=0;i<propertyArray.length ;i++) {
+        var childArray = [];
+        indexValue = 0;
+        indexCondition = 0;
+        for (indexCondition = 0, indexValue = 0; indexCondition < conditionArray.length && indexValue < valueArray[index].length;) {
+            valueCondition = conditionArray[indexCondition];
+            valueValue = valueArray[index][indexValue];
+            if (valueCondition == valueValue) {
+                childArray.push(valueArray[i][indexValue]);
+                indexValue++;
+                indexCondition++;
+            } else if (valueCondition < valueValue) {
+                indexCondition++;
+                childArray.push(undefined);
+            } else {
+                indexValue++;
+            }
+        }
+        while (indexCondition < conditionArray.length){
+            childArray.push(undefined);
+            indexCondition++;
+        }
+        rs.push(childArray);
+    }
+ 	return rs;
+}
+```
+8，
+# 格式化数据
+##　使用场景
+前端显示数据的时候，实现对数据的精度进行处理，可以实现类似excell的单元格，格式化功能。
+
+## code
+```
+/**
+ * 由于在模型计算结果数据model_output表中没有维护数据单位，在经评报告页面中获取的数值需要从页面中获取其单位并对cellValue进行格式化处理
+ * 参数：
+ * cellValue：从model_out表中获取到的计算值
+ * tdUnit：页面中当前cellValue的单位
+ * precision：小数点精度
+ * @param defaultValue 默认值,如果不传则默认是空字符串：“”
+ * */
+function cellValueFormat(cellValue,tdUnit,precision, defaultValue){
+    // precision = 5;
+    cellValue = cellValue + "";//将cellValue强转为字符串类型
+    if (typeof (cellValue) == "undefined" || cellValue == "undefined" || cellValue == "NaN" ||  cellValue=="") {
+        cellValue = defaultValue == null ?"" : defaultValue;
+    } else  if(cellValue == "0" || isNaN(cellValue)) {
+        //不是number，不进行任何处理
+	}else{
+		//var tdUnit = $(tdArr[i]).next("td").text();
+		cellValue = parseFloat(cellValue);//string转换number，以便调用toFixed精度函数
+		//cellValue的单位如果是百分比则进行处理：cellValue = cellValue * 100
+		if("%" == tdUnit){
+			cellValue = cellValue * 100;
+			cellValue = cellValue.toFixed(precision);
+			cellValue = f(cellValue, precision);//百分比精度
+            cellValue += "%";
+			console.log("百分比数据处理完成：cellValue = "+cellValue);
+		}else if("年" == tdUnit) {//由于model_out表中年份是double类型的，由形参传入年份的精度，比如在Echarts的X轴则设置年份的精度为0
+            cellValue = cellValue.toFixed(precision);
+            cellValue = f(cellValue, precision);//百分比精度
+            console.log("年数据处理完成：cellValue = " + cellValue);
+        }else if (""==tdUnit || null==tdUnit || typeof(tdUnit)=="undefined"){//不指定单位的情况
+        	if(typeof(cellValue)=="number" || !isNaN(cellValue)){//cellValue是数字类型或者是符合数字类型的字符串
+        		cellValue = f(cellValue, precision);
+        	}
+		}else{
+            if(typeof(cellValue)=="number" || !isNaN(cellValue)){//cellValue是数字类型或者是符合数字类型的字符串
+                cellValue = f(cellValue, precision);
+            }
+		}
+	}
+	return cellValue;
+}
+
+/**
+ * @author zgli
+ * 数组初始化
+ */
+function arrayValueFormat(cellArray,tdUnit,precision, defaultValue) {
+    for (var i = 0; i < cellArray.length; i++){
+        cellArray[i] = cellValueFormat(cellArray[i], tdUnit, precision,defaultValue);
+    }
+    return cellArray;
+}
+
+/**
+ *  @author zgli
+ *  添加对数字格式化，如果小数点后面有值，
+ *  则按照精度处理，没有则去掉多余 0
+ *  */
+function f(cellValue, precision) {
+    /* 添加对数字格式化，如果小数点后面有值，则按照精度处理，没有则去掉0*/
+    var array = cellValue.toString().split(".");
+    var index=-1;
+    if(array.length>1){
+        for(var i = 0;i<array[1].length && i<precision;i++) {
+            if (array[1].charAt(i) != "0") {
+                index=i+1;
+            }
+        }
+    }
+    if(index!=-1){
+        cellValue = Number(cellValue).toFixed(precision);
+    }else{
+        cellValue = parseInt(cellValue);
+    }
+    return cellValue;
+};
+
+/**
+ *  format number，support %
+ * @param value  number
+ * @param precision
+ * @param unit %
+ * @return 50%
+ */
+function valueFormat(value, precision, unit){
+    // debugger;
+    switch (unit) {
+        case "%":
+            value = cellValueFormat(value, "%", precision);
+            break;
+        default:
+            value = cellValueFormat(value, unit, precision);
+    }
+    return value;
+
+}
+
+```
+9，
+# 自动生成excell的 position
+## 使用场景
+	使用页面生成，excell大量单元格，成千上百的量。如果量小就没必要使用。
+	要做Excell的table，而且要显示值，通过给td标签，添加一个postion（值是excell单元格位置）属性
+	来实现对大量table的赋值。
+## code
+parse 来自一个第三方的工程，下载地址是
+
+```
+
+import cn.com.goldwind.kit.excel.parser.ExcelFormulaToken;
+import cn.com.goldwind.kit.excel.parser.ExcelFormulaTokenSubtype;
+import cn.com.goldwind.kit.excel.parser.ExcelFormulaTokenType;
+import cn.com.goldwind.kit.excel.processor.impl.ArgumentProcessor;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
+public void generete() throws IOException {
+       BufferedWriter bwnull = new BufferedWriter(new FileWriter("c://tdPosition.txt"));
+       String argument = "C58:AB59";
+       String sheet = "附表5年度利润表";
+       int rowLength = 27;
+       ExcelFormulaToken token = new ExcelFormulaToken(argument, ExcelFormulaTokenType.Argument, ExcelFormulaTokenSubtype.Range );
+       token.setSheetName(sheet);
+       ArgumentProcessor te = new ArgumentProcessor();
+       String[] cells = te.process(token).split(",");
+       for (int i=0;cells!=null && i < cells.length; i++){
+           if ((i) % rowLength == 0) {
+               System.out.println("<tr>");
+               bwnull.write("<tr>");
+               bwnull.newLine();
+           }
+           System.out.println("<td position=" + cells[i] + "></td>");
+           bwnull.write("<td position=" + cells[i] + "></td>");
+           bwnull.newLine();
+           if ((i+1) % rowLength == 0) {
+               System.out.println("</tr>");
+               bwnull.write("</tr");
+               bwnull.newLine();
+           }
+       }
+       bwnull.flush();
+       bwnull.close();
+   }
+```
+
+10，
+# 关于spring boot，yml文件配置的自己见解
+## 使用场景
+	如果项目中存在大量重复的代码，大量重复指的是大量的if else 或者逻辑上的大量判断
+就不要在程序里面进行处理了，这样不仅造成代码的兼容性很低，而且可读性更低，维护代价巨大无比。
+通过java万物皆对象的思想，把这些数据进行抽象到配置文件中，然后通过读配置文件来进行处理。
+这样如果有新的模型需要处理，添加配置文件或者修改配置文件就ok，不需要修改代码。	
+## example
+	项目需要处理10个excell文件，excell文件是由10+的sheet页组成，sheet页中是大量的公式而每个
+excell文件是不一样的。要通过web页面实现excell输入数据，单击计算，显示所有sheet页中的数据功能。
+这里面输入数据的sheet每个模型不一样，输出数据的sheet页也不一样。而sheet页本身是有意义的，而由于
+使用java poi来实现excell公式计算，有些公式没有实现，所以需要进行特殊处理。	
+	我把10个excell文件，进行分类，modelType 1-->10,对应各自的excell文件。
+通过在yml文件中配置model1，model2，这样前台js只要传递model类型，其他的数据我都可以通过yml文件得到
+这样程序的处理流程是一样的，不管你有10个模型，还是1000个模型，都不用修改代码，只需要修改配置文件。
+```
+evaluationModel:
+  config:
+    models:
+      model1:
+        # 项目列表：装机容量、年理论发电小时数、当地保障小时数；概览列表：项目所在地、动态总投资、融资比例、项目IRR、股权IRR
+        keys: 附表3_B13,附表3_B14,附表3_B19,附表3_B12,附表3_B24,附表3_B80,附表5_B105,附表5_B93
+        calculate:
+          # 有些需要模型需要计算无补贴电价，所以需要重新设置一些单元格的值, replace可以有多个
+          # 如果有多个以 英文逗号隔开 example： 附表3_B48, 附表3_B49
+          #如果calculateList.get(1...n) ,如果1-n 中的setPosition中有重复的单元格，则 后面的会覆盖前面的
+            - cellPosition : 附表3_B48
+              cellValue : 0
+              setPosition : 附表3_I14,附表3_K14
+              getPosition : 附表3_I10,附表3_K10
+        # 项目退出，如果存储整个sheet则填写相应的sheet，可以有多个。
+        # 如果要存储指定的单元格，可以传单元格的位置数组。
+        # 如果sheet 和 cellPosition 都填值，则这些数据都存储。
+        exit:
+          sheet: 附表6
+          cellPosition:
+        # 模型假设页
+        inputSheet : 附表3
+        # 敏感系数计算 , replace可以有多个
+        sensitivity:
+          - cellPosition: 附表6_B23,附表6_B24
+            cellValueY: 0.85,0.9,0.95,1,1.05,1.1,1.15
+            cellValueX: 0.85,0.9,0.95,1,1.05,1.1,1.15
+            setPosition: 附表6_C29:附表6_I35
+            getPosition: 附表6_B28
+```
+
+11，jenkins配置
+11.1 系统管理->插件管理 插件：Maven Integration plugin，Publish Over SSH
+11.2 系统管理->系统设置  ssh server 配置：
+如果用的是统一的key或者密码，则配置一次就可以了。
+如果每个服务器密码都不一样，需要点击高级按钮，把
+复选框 Use password authentication, or use a different key 	勾选上就行了。
+11.3 如果不想使用jenkins的默认工程路径，可以通过配置环境变量 JENKINS_HOME。这个不会就自己百度一下。
+11.4 maven，jdk，这些尽量使用本地配置，这样可以控制maven版本，和mavene的本地仓库。
+jdk默认是jdk10，所以推荐使用本地jdk路径，去掉自动按照复选框就ok。
+11.5 新建选择新建一个maven项目，如果没有安装Maven Integration plugin插件，则不会出现该item。
+11.6 源码管理工具，配置自己的svn/git或者本地都可以。
+11.7 build ，这里只能选择一个pom.xml文件，就是项目的根目录的pom.xml
+如果一个项目有多个子项目的pom.xml文件，比如我的项目路径是这样的
+12 
+# java8 新特性
+## 1. list  排序，单条件，多条件，反转
+```
+List<ModelProfit> modelProfitList = modelService.selectModelProfitByProposalId(queryP.getProposalId());
+modelProfitList.sort(Comparator.comparing(ModelProfit::getTime));
+```
+## 2， map foreach
+```
+ Map<String, Object> temp = new HashMap<>();
+        map.forEach((k, v) -> {
+            if (-1 == k.indexOf("_")) {
+                System.out.println(k + "  " + v);
+                temp.put(k, v);
+            }
+        });
+```
+## 3，list foreach
+```
+ Map<String, Object> temp = new HashMap<>();
+        list.stream().forEach((k -> {
+            map.remove(k.getCellName());
+        }));
+
+```
+

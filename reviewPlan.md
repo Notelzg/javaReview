@@ -1,8 +1,8 @@
 #  java复习计划
 ## Java基础 
 |Time |lecture|Author|
-|--------------|:-------------:|:----------:|
-|2018-8-7-->9-10| SCJP |Sun Educational Services|
+|--------------|:-------------:|:----------:| :-----------:|
+|2018-8-7-->9-10| SCJP |Sun Educational Services|2018-11-04 |
 |2018-9-10-->11-17|hinking in javaa|Bruce Eckel|
 |2018-11-17-->12-17|design in pattern |赵哲|
 |2018-12-17-->2019-3-17|alogirith|Thomas H|
