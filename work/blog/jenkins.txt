@@ -1,0 +1,63 @@
+1，jenkins配置
+## 1 系统管理->插件管理 插件：Maven Integration plugin，Publish Over SSH
+## 2 系统管理->系统设置  ssh server 配置：
+如果用的是统一的key或者密码，则配置一次就可以了。
+如果每个服务器密码都不一样，需要点击高级按钮，把
+复选框 Use password authentication, or use a different key 	勾选上就行了。
+ 
+## 3 如果不想使用jenkins的默认工程路径，可以通过配置环境变量 JENKINS_HOME。这个不会就自己百度一下。
+## 4 maven，jdk，这些尽量使用本地配置，这样可以控制maven版本，和mavene的本地仓库。jdk默认是jdk10，所以推荐使用本地jdk路径，去掉自动按照复选框就ok。
+ 
+## 5 新建选择新建一个maven项目，如果没有安装Maven Integration plugin插件，则不会出现该item。
+ 
+## 6 源码管理工具，配置自己的svn/git或者本地都可以。
+## 7 build ，这里只能选择一个pom.xml文件，就是项目的根目录的pom.xml
+如果一个项目有多个子项目的pom.xml文件，比如我的项目路径是这样的。
+ 、
+项目结构如图，如果没有一个总的pom文件，则不能一次打包多个maven项目。
+ 
+总的pom.xml内容，主要是在 models里面配置上需要编译打包的项目pom文件路径
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+ 
+  <groupId>com.goldwind.stockright</groupId>
+  <artifactId>goldwindstockright</artifactId>
+  <version>2.0</version>
+  <packaging>pom</packaging>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+ 
+  <modules>
+    <module>evaluation-common</module>
+    <module>evaluation-service</module>
+    <module>holding-common</module>
+    <module>holding-service</module>
+    <module>investment-common</module>
+    <module>investment-service</module>
+    <module>privilege-common</module>
+    <module>privilege-service</module>
+    <module>third-common</module>
+    <module>third-party</module>
+    <module>sockright-ui</module>
+  </modules>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.6.1</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+
+Post steps
+ 
+Linux脚本的echo，是可以通过jenkins的控制台输出看到的。
+
