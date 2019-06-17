@@ -18,7 +18,70 @@
  的概念，通过定义接口，或者抽象类，使用策略，但是通过导出类实现，
  实现不同的定制化的策略。
  例子在ProcessFiles文件中。
- ## 文件件类分类
- RandomAccessFile ，这个类提供了搜索文件内容的功能，当然再jdk1.4之前，之后
- 由nio存储映射文件取代。
- 
+## 缓存
+为了加快速度，所以有了缓存技术，在I/O操作中，以buffer开头的都是用来做缓存的
+比如： BufferReader 对应的字符缓冲，BufferInputStream 是面对字节的缓冲.
+经过总结发现，java中对字节的操作都是以Stream结束，对于字符的操作是以Write/Reader结尾，
+最起码针对的文件操作是这的的。
+## 格式化数据
+使用DataInputSteam, DataOutputStream，对数据进行格式化，比如writeDouble、writeUTF，
+成对的使用 writeDouble readDouble，可以保证数据的准确性，无论在哪个平台上面,解决
+不同平台的兼容性问题, 其缺点是必须知道要读取数据的位置和类型，不然在就会造成数据的混乱，这一点
+就是需要通过结构性文件来处理，比如 xml yml、json等结构性文件。
+## 支持文件内容搜索的文件类
+ ### RandomAccessFile
+ 通过seek函数，到文件的任意位置，通过WriteDouble/UTF等函数，修改该位置的内容，而且
+ 这个类提供了搜索文件内容的功能，当然再jdk1.4之前，之后 由nio存储映射文件取代。
+##  管道
+PipeFileOutStream
+PipeFileInStream
+PipeReader
+PipeWriter
+管道主要用于进程间通信，使用场景是多线程。
+## 重定向
+System.setIn(PrintStream)
+System.setOut(PrintStream)
+System.setErr(PrintStream)
+面向字节流
+## ByteBuffer
+字节缓冲区，通过字节缓冲区的视图，可以实现对同一格式的数据，进行不同格式的转换
+比如 吧 int ，转成 其他所有的基本类型。这个是通过把缓冲区转成不同类型的视图来
+完成的，同时对视图的操作，反过来可以影响缓冲区中的数据。
+由于字符是由字节组成的，所以字节缓冲区☝应该是属于最底层的缓冲区，相对于物理设备
+缓冲区，或者操作系统缓冲区。当然这个缓冲是建立在系统缓冲的基础上的。
+缓冲区的基本操作
+put 
+get 
+rewind
+hasRemaining
+position
+视图转换
+asFloatBuffer ，float可以使用其他基本类型替换，支持所有基本类|型的视图。
+在进行视图转换是根据基本类型所占的字节长度来对缓冲区进行准换的,转换视图
+本身不会对缓冲区数据有任何影响。
+## 文件锁
+|API | 锁类型 | 解释  |
+|:---:|:----:|:-----|
+|tryLock| 非阻塞 |  尝试给文件加锁，如果失败则返回null，不会阻塞当前进程|
+|lock   | 阻塞锁 |  会阻塞当前进程，直到获取到该文件的锁。|
+
+lock(postion, size, shared) ,部分文件加锁，以及是否共享，针对大文件，特别是
+映射文件使用，比如数据库的操作，就是文件部分加锁实现的。
+java 的文件锁，会调用操作系统的文件锁，所以可以在不同进程间使用，即使是非java进程。
+## 文件压缩
+java 支持Zip和gzip压缩，通过zip和gzipStream流来实现，经过该流的数据
+都会自动进行压缩。
+jar文件也是一种压缩文件，而且跨平台效果也不错。
+## 对象序列号
+对象序列化技术主要是为了解决，对象在程序(具体应该是进程 更具体的说应该是Java虚拟机进程中，并且被垃圾回收器回收前)
+为了在其他进程中使用该对象，换句话说，在其他的空间或者时间使用该对象，需要使用序列化技术，把对象以及该对象引用的对象
+都用对象流(ObjectInputStream,ObjectOutStream)进行处理，可以存入文件，在本地系统的其他时间使用，或者进行网络传输在其他操作系统运行，是一种兼容操作系统的
+毕竟java虚拟机是跨操作系统的。
+### 序列化定制化 Externalizable
+通过implements Serializable接口可以使用基本的序列化方法简单易用。但是如果对序列化有特殊要求
+比如子对象需要重新创建，或者某一部分不被序列化。
+Externalizable 接口继承Serializable
+### transient 
+该关键字和 serializable  配合使用，serializable接口默认序列化所有数据，如果不想被序列化可以使用
+transient 关键字来反序列化，比如用户密码。当然这个关键字也在注解里面被用来去除数据库持久层对象的反持久层，
+意思是只在持久层使用，但是不存入数据库。

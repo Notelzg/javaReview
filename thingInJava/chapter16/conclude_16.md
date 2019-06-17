@@ -37,3 +37,13 @@ Arrays.toDeepString
 也是一个揭开编程语言神秘面纱的过程，是不是很激动，这是一个知其所以然的过程，虽然他可能花费你很长的时间
 而你也不能从其中获益，但是就像别人说的，学习本来就是一个螺旋式上升的过程，虽然你不能立即获益，但是从
 长远来看一定是有益的，至于是什么，那估计就是装逼的资本哈哈。    
+## notice
+int[] ia = new int[10];
+Arrays.asList(in) 其返回值是 List<int[]> 类型的
+Integer[] ina = new Integer[10];
+Arrays.asList(ina) 其返回值是 List<Integer> 类型的
+原因是 T...类型诊断机制，认为int 是一种基本类型，Integer是一个类
+int不是类 所以int[] 就被解析成了一个object对象，object对象里面包括了int[]数组
+所以asList(基本数据类型数组) 其返回值都是一个对象，该对象包含基本数据类型数组。
+所以其返回类型是 List<int[]> ，ListM<char[]> 等基本数据类型数组的List,而且
+List的zise永远是1.

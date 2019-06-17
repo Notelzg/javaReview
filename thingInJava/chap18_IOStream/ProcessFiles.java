@@ -5,7 +5,7 @@ import java.io.IOException;
 
 public class ProcessFiles {
     public interface Strategy {
-        void process(File file);
+        void process(File file) throws IOException;
     }
 
     private Strategy strategy;

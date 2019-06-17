@@ -1,19 +1,16 @@
 package chap18_IOStream;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.ListIterator;
+import java.io.*;
+import java.util.*;
 
 public class practice_7 {
     public static void main(String[] args){
 
         try {
-            practice7("/Users/lizhigang/Documents/javaReview/thingInJava/chap18_IOStream/conclude_18.md");
+            OSExecute.command("javap thingInJava/reflect/ShowMethod".replaceAll("/", "."));
+            PPrint.pprint(Directory.walk(".", ".*ShowMethod\\.class$").files);
+            System.nanoTime();
+           // practice7("/Users/lizhigang/Documents/javaReview/thingInJava/chap18_IOStream/conclude_18.md");
         } catch (Exception e) {
             e.printStackTrace();
         }
