@@ -1,8 +1,0 @@
-cn\com\goldwind\kit\excel\aviator\logic\CustomLogicFunctionTest.class
-cn\com\goldwind\kit\excel\aviator\math\CustomMathFunctionTest.class
-cn\com\goldwind\kit\excel\aviator\search\CustomSearchFunctionTest.class
-cn\com\goldwind\kit\excel\aviator\statistics\CustomStatisticsFunctionTest.class
-cn\com\goldwind\kit\excel\aviator\date\CustomDateFunctionTest.class
-cn\com\goldwind\kit\excel\aviator\op\OpFunctionTest.class
-cn\com\goldwind\kit\excel\aviator\finance\CustomFinanceFunctionTest.class
-cn\com\goldwind\kit\excel\parser\ExcelFormulaParserTest.class
