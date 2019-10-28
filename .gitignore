@@ -1,8 +1,9 @@
 *.iml
 *.class
 out/
-.idea/
+.idea/*
 *.idea
 .DS_Store
 .DS_Store?
+target/
 
