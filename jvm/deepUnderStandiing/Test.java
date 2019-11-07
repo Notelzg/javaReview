@@ -1,3 +1,5 @@
+package deepUnderStandiing;
+
 public class Test {
     static {
         i = 0;

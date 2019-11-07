@@ -1,4 +1,4 @@
-import sun.swing.plaf.synth.DefaultSynthStyle;
+package deepUnderStandiing;
 
 public class StaticDispatch {
     static abstract class Human{

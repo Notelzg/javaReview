@@ -1,4 +1,4 @@
-import sun.net.idn.StringPrep;
+package deepUnderStandiing;
 
 public class TestClass implements  interface0 {
 

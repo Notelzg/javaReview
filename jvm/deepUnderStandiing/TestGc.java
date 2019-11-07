@@ -1,6 +1,6 @@
-import java.io.BufferedReader;
+package deepUnderStandiing;
+
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.concurrent.TimeUnit;
 
 public class TestGc {

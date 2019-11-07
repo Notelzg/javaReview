@@ -1,3 +1,5 @@
+package deepUnderStandiing;
+
 /**
  * 用来测试，class文件在链接阶段的，准备阶段中
  * 如何处理成员变量，对于不同访问标志的

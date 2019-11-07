@@ -1,3 +1,5 @@
+package deepUnderStandiing;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -28,7 +30,7 @@ public class ClassLoaderTest {
             }
         };
 
-        Class loadClass = classLoader.loadClass("Test");
+        Class loadClass = classLoader.loadClass("deepUnderStandiing.Test");
         System.out.println(loadClass.getSimpleName());
         Object object = loadClass.newInstance();
         System.out.println(object.getClass());
