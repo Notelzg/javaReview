@@ -211,8 +211,8 @@ public class GoalSeek {
 		if ( DEBUG_GOAL_SEEK ) {
 			log( "goalSeekNewton" ) ;
 		}
-
-		for (iterations = 0; iterations < 20; iterations++) {
+        //次数改为100次，和微软Excell保持一致。
+		for (iterations = 0; iterations < 100; iterations++) {
 			double x1 ;
             double y0 ;
             double df0 ;

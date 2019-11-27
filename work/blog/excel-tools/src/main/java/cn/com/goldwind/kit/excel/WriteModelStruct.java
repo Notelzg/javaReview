@@ -25,6 +25,9 @@ public class WriteModelStruct {
         ee.calculateBatchLevel(m);
         start = new Date();
        System.out.println("calculate finished. " + DateFormat.getFullDatetimeFormatter().format(start));
+       CellModel test = new CellModel();
+       test.setCellType("1");
+
         return  m;
     }
 

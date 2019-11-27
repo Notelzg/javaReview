@@ -39,7 +39,12 @@ public class XIRRFunction extends AbstractVariadicFunction {
     public AviatorObject variadicCall(Map<String, Object> env, AviatorObject... args) {
         int len = args.length;
         int half = len / 2;
-        double guess = 0.1;
+        /*
+        Excel 使用一种迭代技术来计算Xirr。 通过使用更改的速率 (从 guess 开始), Xirr将循环遍历计算,
+         直到结果在 0.000001% 范围内得到准确。 如果Xirr找不到在100尝试之后工作的结果, 则 #NUM! 返回错误值。
+         所以精度改为和微软的一样，次数改为100次。
+         */
+        double guess = 0.00000001;
 
         if (args.length < 2) {
             throw new IllegalArgumentException("Too less args");

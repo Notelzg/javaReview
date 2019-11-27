@@ -12,9 +12,9 @@ import java.io.IOException;
 public class GenerateTdPosition {
     public void generete() throws IOException {
         BufferedWriter bwnull = new BufferedWriter(new FileWriter("c://tdPosition.txt"));
-        String argument = "C58:AB59";
-        String sheet = "附表5年度利润表";
-        int rowLength = 27;
+        String argument = "E2:AJ25";
+        String sheet = "附表5";
+        int rowLength = 32;
         ExcelFormulaToken token = new ExcelFormulaToken(argument, ExcelFormulaTokenType.Argument, ExcelFormulaTokenSubtype.Range );
         token.setSheetName(sheet);
         ArgumentProcessor te = new ArgumentProcessor();
@@ -34,8 +34,6 @@ public class GenerateTdPosition {
                 bwnull.newLine();
             }
         }
-        bwnull.flush();
-        bwnull.close();
     }
 
     public static  void main(String[] args){

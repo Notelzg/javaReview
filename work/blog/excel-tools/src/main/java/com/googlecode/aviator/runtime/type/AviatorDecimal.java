@@ -1,8 +1,9 @@
 package com.googlecode.aviator.runtime.type;
 
+import com.googlecode.aviator.AviatorEvaluator;
+
 import java.math.BigDecimal;
 import java.util.Map;
-import com.googlecode.aviator.AviatorEvaluator;
 
 
 /**
@@ -77,8 +78,15 @@ public class AviatorDecimal extends AviatorNumber {
       case Double:
         return AviatorDouble.valueOf(this.doubleValue() / other.doubleValue());
       default:
-        return AviatorDecimal
-            .valueOf(this.toDecimal().divide(other.toDecimal(), AviatorEvaluator.getMathContext()));
+        if (Double.isFinite(other.doubleValue()) && Double.isFinite(this.number.doubleValue())) {
+          if (0 == Double.compare(other.doubleValue(), 0.0d) || 0 == Double.compare(other.doubleValue(), -0.0d) )
+            return  new AviatorDouble(Double.NaN);
+          BigDecimal a = new BigDecimal(String.valueOf(other.doubleValue()));
+          BigDecimal b = new BigDecimal(String.valueOf(this.number.doubleValue()));
+          b = b.divide(a,20,BigDecimal.ROUND_HALF_UP);
+          return new AviatorDouble(b);
+        }
+        return new AviatorDouble(Double.NaN);
     }
   }
 

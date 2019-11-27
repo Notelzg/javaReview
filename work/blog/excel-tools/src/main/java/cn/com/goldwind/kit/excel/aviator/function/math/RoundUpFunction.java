@@ -42,7 +42,7 @@ public class RoundUpFunction extends AbstractFunction {
         Number n_arg1 = FunctionUtils.getNumberValue(arg1, env);
         Number n_arg2 = FunctionUtils.getNumberValue(arg2, env);
 
-        BigDecimal bg = new BigDecimal(n_arg1.doubleValue());
+        BigDecimal bg = new BigDecimal(n_arg1.toString());
         double f1 = bg.setScale(n_arg2.intValue(), BigDecimal.ROUND_UP).doubleValue();
         return new AviatorDouble(f1);
     }

@@ -15,14 +15,15 @@
  **/
 package com.googlecode.aviator.runtime.type;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 
 /**
  * Aviator double type
- * 
+ *
  * @author dennis
- * 
+ *
  */
 public class AviatorDouble extends AviatorNumber {
 
@@ -44,11 +45,6 @@ public class AviatorDouble extends AviatorNumber {
   @Override
   public int innerCompare(AviatorNumber other) {
     return Double.compare(this.number.doubleValue(), other.doubleValue());
-//    if(Math.abs(this.number.doubleValue() - other.doubleValue()) < 1e-10){
-//      return 0;
-//    } else {
-//      return Double.compare(this.number.doubleValue(), other.doubleValue());
-//    }
   }
 
 
@@ -60,13 +56,30 @@ public class AviatorDouble extends AviatorNumber {
 
   @Override
   public AviatorObject innerDiv(AviatorNumber other) {
-    return new AviatorDouble(this.number.doubleValue() / other.doubleValue());
+    /* 解决浮点计算  */
+    if (Double.isFinite(other.doubleValue()) && Double.isFinite(this.number.doubleValue())) {
+      if (0 == Double.compare(other.doubleValue(), 0.0d) || 0 == Double.compare(other.doubleValue(), -0.0d) )
+        return  new AviatorDouble(Double.NaN);
+      BigDecimal a = new BigDecimal(String.valueOf(other.doubleValue()));
+      BigDecimal b = new BigDecimal(String.valueOf(this.number.doubleValue()));
+      b = b.divide(a,20,BigDecimal.ROUND_HALF_UP);
+      return new AviatorDouble(b.doubleValue());
+    }
+    return new AviatorDouble(Double.NaN);
   }
 
 
   @Override
   public AviatorNumber innerAdd(AviatorNumber other) {
-    return new AviatorDouble(this.number.doubleValue() + other.doubleValue());
+    /* 解决浮点计算  */
+    if (Double.isFinite(other.doubleValue()) && Double.isFinite(this.number.doubleValue())) {
+      BigDecimal a = new BigDecimal(String.valueOf(other.doubleValue()));
+      BigDecimal b = new BigDecimal(String.valueOf(this.number.doubleValue()));
+      return new AviatorDouble(b.add(a).doubleValue());
+    }
+    return new AviatorDouble(Double.NaN);
+    /* 这是之前的 */
+//    return new AviatorDouble(this.number.doubleValue() + other.doubleValue());
   }
 
 
@@ -78,7 +91,13 @@ public class AviatorDouble extends AviatorNumber {
 
   @Override
   public AviatorObject innerMult(AviatorNumber other) {
-    return new AviatorDouble(this.number.doubleValue() * other.doubleValue());
+    /* 解决浮点计算  */
+    if (Double.isFinite(other.doubleValue()) && Double.isFinite(this.number.doubleValue())) {
+      BigDecimal a = new BigDecimal(String.valueOf(other.doubleValue()));
+      BigDecimal b = new BigDecimal(String.valueOf(this.number.doubleValue()));
+      return new AviatorDouble(b.multiply(a).doubleValue());
+    }
+    return new AviatorDouble(Double.NaN);
   }
 
 
@@ -90,6 +109,13 @@ public class AviatorDouble extends AviatorNumber {
 
   @Override
   public AviatorObject innerSub(AviatorNumber other) {
-    return new AviatorDouble(this.number.doubleValue() - other.doubleValue());
+    /* 解决浮点计算  */
+    if (Double.isFinite(other.doubleValue()) && Double.isFinite(this.number.doubleValue())) {
+      BigDecimal a = new BigDecimal(String.valueOf(other.doubleValue()));
+      BigDecimal b = new BigDecimal(String.valueOf(this.number.doubleValue()));
+      return new AviatorDouble(b.subtract(a).doubleValue());
+    }
+    return new AviatorDouble(Double.NaN);
   }
 }
+

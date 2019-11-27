@@ -49,7 +49,7 @@ public class IRRFunction extends AbstractVariadicFunction {
             }
         }
 
-        double irr = Irr.irr(ArrayUtils.toPrimitive(dup), 0.01D);
+        double irr = Irr.irr(ArrayUtils.toPrimitive(dup), 0.0000001D);
         return new AviatorDouble(irr);
 
     }

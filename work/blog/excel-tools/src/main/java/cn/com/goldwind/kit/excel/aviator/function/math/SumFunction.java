@@ -4,15 +4,15 @@
  */
 package cn.com.goldwind.kit.excel.aviator.function.math;
 
-import java.lang.reflect.Array;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.ArrayUtils;
-
 import com.googlecode.aviator.runtime.function.AbstractVariadicFunction;
 import com.googlecode.aviator.runtime.type.AviatorDouble;
 import com.googlecode.aviator.runtime.type.AviatorObject;
+import org.apache.commons.lang3.ArrayUtils;
+
+import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author lfjin
@@ -40,7 +40,7 @@ public class SumFunction extends AbstractVariadicFunction {
      */
     @Override
     public AviatorObject variadicCall(Map<String, Object> env, AviatorObject... args) {
-        double rtn = 0.0f;
+        BigDecimal rtn = new BigDecimal(0.0f);
         for (AviatorObject arg : args) {
 
             Object first = arg.getValue(env);
@@ -65,8 +65,11 @@ public class SumFunction extends AbstractVariadicFunction {
                     }
                 }
 
-                double sub = addEveryone(ArrayUtils.toPrimitive(dup));
-                rtn = rtn + sub;
+                BigDecimal sub = addEveryone(ArrayUtils.toPrimitive(dup));
+                if (Double.isFinite(sub.doubleValue()) && Double.isFinite(rtn.doubleValue()))
+                    rtn = rtn.add(sub);
+                else
+                    new AviatorDouble(Double.NaN);
 
             } else if (clazz.isArray()) {
                 int length = Array.getLength(first);
@@ -76,11 +79,19 @@ public class SumFunction extends AbstractVariadicFunction {
                     dup[i] = Array.getDouble(first, i);
                 }
 
-                double sub = addEveryone(ArrayUtils.toPrimitive(dup));
-                rtn = rtn + sub;
+                BigDecimal sub = addEveryone(ArrayUtils.toPrimitive(dup));
+                if (Double.isFinite(sub.doubleValue()) && Double.isFinite(rtn.doubleValue()))
+                    rtn = rtn.add(sub);
+                else
+                    new AviatorDouble(Double.NaN);
+
 
             } else if (Number.class.isAssignableFrom(clazz)) {
-                rtn = rtn + ((Number) first).doubleValue();
+                double sub =  ((Number) first).doubleValue();
+                if (Double.isFinite(sub) && Double.isFinite(rtn.doubleValue()))
+                    rtn = rtn.add(new BigDecimal(String.valueOf(sub)));
+                else
+                    new AviatorDouble(Double.NaN);
             } else if (String.class.equals(clazz)) {
                 String s = (String) first;
                 double d = 0.0f;
@@ -90,19 +101,28 @@ public class SumFunction extends AbstractVariadicFunction {
                     } catch (Exception e) {
                     }
                 }
-                rtn = rtn + d;
+                if (Double.isFinite(d) && Double.isFinite(rtn.doubleValue()))
+                    rtn = rtn.add(new BigDecimal(String.valueOf(d)));
+                else
+                    new AviatorDouble(Double.NaN);
             } else {
                 throw new IllegalArgumentException(arg.desc(env) + " is not a number value");
             }
         }
-        return new AviatorDouble(rtn);
+        return new AviatorDouble(rtn.doubleValue());
     }
 
-    private double addEveryone(double[] seq) {
-        double rtn = 0.0f;
+    private BigDecimal addEveryone(double[] seq) {
+        BigDecimal rs = new BigDecimal(0.0f);
+        BigDecimal temp  ;
         for (double d : seq) {
-            rtn = rtn + d;
+            if (Double.isFinite(d) && Double.isFinite(rs.doubleValue())) {
+                    temp = new BigDecimal(String.valueOf(d));
+                    rs = rs.add(temp);
+            }else {
+                return new BigDecimal(Double.NaN);
+            }
         }
-        return rtn;
+        return rs;
     }
 }
