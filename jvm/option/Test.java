@@ -18,7 +18,7 @@ public class Test {
     public static void main(String[] args) throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         String s = new String("1123");
         String s1 = new String("123");
-        System.out.println(String.join());
+        System.out.println(String.join(s));
         System.out.println(s.replace('1', '3'));
         System.out.println(s.replace("1", "3"));
         Long  l = new Long(1);
