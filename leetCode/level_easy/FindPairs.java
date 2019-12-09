@@ -1,8 +1,5 @@
 package level_easy;
 
-import org.junit.jupiter.api.Test;
-
-import javax.swing.text.html.Option;
 import java.util.*;
 
 /**
@@ -17,6 +14,9 @@ import java.util.*;
  * 尽管数组中有两个1，但我们只应返回不同的数对的数量。
  */
 public class FindPairs {
+    public FindPairs() {
+    }
+
     public static  int findPairs(int[] nums, int k) {
         Objects.requireNonNull(nums);
         Set<List<Integer>> set = new HashSet<>();
@@ -61,10 +61,14 @@ public class FindPairs {
         }
         return count;
     }
-    @Test
     public void test(){
         System.out.println(FindPairs.findPairs1(new int[]{1,2,3,4,5}, -1));
         System.out.println(FindPairs.findPairs1(new int[]{1,2,3,4,5}, 1));
         System.out.println(FindPairs.findPairs1(new int[]{6,7,3,6,4,6,3,5,6,9}, 4));
+    }
+
+    public static void main(String[] args){
+       FindPairs t =  new FindPairs();
+      t.test();
     }
 }

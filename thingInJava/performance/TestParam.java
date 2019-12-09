@@ -1,3 +1,5 @@
+package performance;
+
 public class TestParam {
     private int size;
     private int loop;

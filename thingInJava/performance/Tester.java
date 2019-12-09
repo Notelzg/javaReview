@@ -1,3 +1,5 @@
+package performance;
+
 import java.util.List;
 
 public class Tester<C> {

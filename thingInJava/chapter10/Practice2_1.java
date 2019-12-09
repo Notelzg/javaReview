@@ -1,3 +1,5 @@
+package chapter10;
+
 import java.lang.*;
 public class Practice2_1 {
     private String str;

@@ -1,5 +1,6 @@
+package performance;
+
 import java.util.AbstractList;
-import java.util.ArrayList;
 
 public class SlowList extends AbstractList<Integer> {
     private int size = 0;

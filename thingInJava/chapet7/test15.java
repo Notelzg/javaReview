@@ -1,3 +1,5 @@
+package chapet7;
+
 import java.lang.*;
 
 class Person {
