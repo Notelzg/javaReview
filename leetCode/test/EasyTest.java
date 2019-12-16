@@ -1,6 +1,7 @@
 package test;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+
 
 public class EasyTest {
     public boolean searchMatrix(int[][] matrix, int target) {
@@ -19,4 +20,7 @@ public class EasyTest {
         return  false;
     }
 
+    @Test
+    public void  test(){
+    }
 }
