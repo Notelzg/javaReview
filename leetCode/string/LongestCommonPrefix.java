@@ -1,4 +1,4 @@
-package level_easy;
+package string;
 
 
 
