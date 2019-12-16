@@ -50,6 +50,7 @@ public class FindPairs {
         for (int i = 1; i < nums.length; i++){
             if (pre == nums[start] || nums[i] - nums[start] > k){
                 start++;
+                /* start加1， 为了保持i不变，先减一，再加一，保持了不变， */
                 if (start != i) {
                     i--;
                 }
@@ -62,8 +63,8 @@ public class FindPairs {
         return count;
     }
     public void test(){
-        System.out.println(FindPairs.findPairs1(new int[]{1,2,3,4,5}, -1));
-        System.out.println(FindPairs.findPairs1(new int[]{1,2,3,4,5}, 1));
+//        System.out.println(FindPairs.findPairs1(new int[]{1,2,3,4,5}, -1));
+//        System.out.println(FindPairs.findPairs1(new int[]{1,2,3,4,5}, 1));
         System.out.println(FindPairs.findPairs1(new int[]{6,7,3,6,4,6,3,5,6,9}, 4));
     }
 
