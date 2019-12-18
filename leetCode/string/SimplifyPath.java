@@ -13,33 +13,38 @@ import org.junit.jupiter.api.Test;
 public class SimplifyPath {
 
     public String simplifyPath(String path) {
-        int index = 0;
-        String[] pathArr =  path.split("/+");
+        String[] pathArr =  path.split("/");
+        // 数组当做栈
         String[] ans =  new String[pathArr.length];
+        // 栈顶指针
+        int index = 0;
         for (int i = 1; i < pathArr.length; i++){
-            if ("..".equals(pathArr[i]))
-                index--;
-            else  if (!".".equals(pathArr[i]))
+            if ("..".equals(pathArr[i]) && index > 0)
+                index--; // pop
+            else  if (!pathArr[i].equals("") && !pathArr[i].equals(".") && !pathArr[i].equals("..")) {
+                //如果到了/ 根节点，则把入栈路径作为根路径
+                if (index < 0)
+                    index = 0;
                 ans[index++] = pathArr[i];
-
+            }
         }
-        if (index == -1)
+        if (index <= 0)
             return "/";
         StringBuilder stringBuilder = new StringBuilder();
-        for ( int i = 0; i < index; i++){
+        for ( int i = 0; i < index; i++)
             stringBuilder.append("/" + ans[i]);
-        }
         return stringBuilder.toString();
     }
 
     @Test
     public void test(){
 
+        Assertions.assertEquals("/", simplifyPath("/"));
         Assertions.assertEquals("/home", simplifyPath("/home/"));
         Assertions.assertEquals("/", simplifyPath("/../"));
         Assertions.assertEquals("/home/foo", simplifyPath("/home//foo"));
         Assertions.assertEquals("/c", simplifyPath("/a/./b/../../c/"));
         Assertions.assertEquals("/c", simplifyPath("/a/../../b/../c//.//"));
-        Assertions.assertEquals("/a/c/c", simplifyPath("/a//b////c/d//././/.."));
+        Assertions.assertEquals("/a/b/c", simplifyPath("/a//b////c/d//././/.."));
     }
 }
