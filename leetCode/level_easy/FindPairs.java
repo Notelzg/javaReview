@@ -1,5 +1,7 @@
 package level_easy;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.*;
 
 /**
@@ -16,8 +18,27 @@ import java.util.*;
 public class FindPairs {
     public FindPairs() {
     }
-
-    public static  int findPairs(int[] nums, int k) {
+    public int findPairs3(int[] nums, int k) {
+        if (k < 0 || nums.length < 2)
+            return 0;
+        HashMap<Integer, Integer> hash = new HashMap<>(nums.length);
+        // 构建hash， 记录重复值的个数
+        int total = 0;
+        for (int i = 0; i < nums.length; i++) {
+            hash.merge(nums[i], 1, (key, v) -> v + 1);
+        }
+        for (Integer key : hash.keySet()) {
+            if (k == 0) {
+                if (hash.get(key) > 1)
+                    total++;
+            } else {
+                if (hash.containsKey(key + k))
+                    total++;
+            }
+        }
+        return total;
+    }
+        public static  int findPairs(int[] nums, int k) {
         Objects.requireNonNull(nums);
         Set<List<Integer>> set = new HashSet<>();
         if (nums.length < 2)
@@ -51,7 +72,7 @@ public class FindPairs {
             if (pre == nums[start] || nums[i] - nums[start] > k){
                 start++;
                 /* start加1， 为了保持i不变，先减一，再加一，保持了不变， */
-                if (start != i) {
+                if (start < i) {
                     i--;
                 }
             }else if (nums[i] - nums[start] ==k){
@@ -62,14 +83,12 @@ public class FindPairs {
         }
         return count;
     }
+    @Test
     public void test(){
 //        System.out.println(FindPairs.findPairs1(new int[]{1,2,3,4,5}, -1));
 //        System.out.println(FindPairs.findPairs1(new int[]{1,2,3,4,5}, 1));
         System.out.println(FindPairs.findPairs1(new int[]{6,7,3,6,4,6,3,5,6,9}, 4));
-    }
-
-    public static void main(String[] args){
-       FindPairs t =  new FindPairs();
-      t.test();
+        System.out.println();
+        System.out.println(findPairs3(new int[]{1,3,1,5,4}, 0));
     }
 }
