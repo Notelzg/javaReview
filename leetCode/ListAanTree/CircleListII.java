@@ -50,6 +50,7 @@ public class CircleListII {
         }
         return slow;
     }
+
     /**
      * hash存储访问过的节点,如果碰见节点,则证明存在环,返回节点
      * 其实这里有个问题,如果已经存在环,则链表就已经到结尾了

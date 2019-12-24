@@ -2,8 +2,39 @@ package ListAanTree;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class utils {
+    public static int[] str2intArr(String str){
+        Objects.requireNonNull(str);
+        Pattern pattern = Pattern.compile("\\d+");
+        Matcher matcher = pattern.matcher(str);
+        List<Integer> ans = new ArrayList<>();
+        while (matcher.find())
+            ans.add(Integer.parseInt(matcher.group()));
+        return ans.stream().mapToInt(i->i).toArray();
+
+    }
+    public static int[] str2intArrArr(String str){
+        Pattern pattern = Pattern.compile("\\[.*]");
+        Matcher matcher = pattern.matcher(str);
+        while (matcher.find()){
+            System.out.println(matcher.start());
+            System.out.println(matcher.end());
+            System.out.println(matcher.group());
+            String str2 =  str.substring(matcher.start() + 1, matcher.end() -1);
+            Matcher matcher2 = pattern.matcher(str2);
+            while (matcher2.find()) {
+                System.out.println(matcher2.start());
+                System.out.println(matcher2.end());
+                System.out.println(matcher2.group());
+            }
+
+        }
+        return null;
+    }
     public static void printList(ListNode head) {
         while (head != null) {
             System.out.print("--> " + head.val);
