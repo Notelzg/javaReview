@@ -109,7 +109,7 @@ public class SortList {
 
     @Test
     public void test() {
-        Assertions.assertArrayEquals(new Integer[]{1, 2, 3, 4}, utils.list2arr(sortList(utils.arr2list(new int[]{4, 2, 1, 3}))));
-        Assertions.assertArrayEquals(new Integer[]{-1, 0, 3, 4, 5}, utils.list2arr(sortList(utils.arr2list(new int[]{-1, 5, 3, 4, 0}))));
+        Assertions.assertArrayEquals(new Integer[]{1, 2, 3, 4}, utils.list2arr(sortList(utils.arr2list(4, 2, 1, 3))));
+        Assertions.assertArrayEquals(new Integer[]{-1, 0, 3, 4, 5}, utils.list2arr(sortList(utils.arr2list(-1, 5, 3, 4, 0))));
     }
 }

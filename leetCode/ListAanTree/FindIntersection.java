@@ -68,8 +68,8 @@ public class FindIntersection {
     @Test
     public void test(){
         String str1 = "[[4,1,8,4,5]]";
-        ListNode a = utils.arr2list(new int[]{4});
-        ListNode b = utils.arr2list(new int[]{5});
+        ListNode a = utils.arr2list(new Integer[]{4});
+        ListNode b = utils.arr2list(new Integer[]{5});
         Assertions.assertEquals(8, getIntersection(a, b).val);
     }
 }

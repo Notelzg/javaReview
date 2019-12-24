@@ -168,9 +168,7 @@ public class AddTwoNumers {
     public void test() {
         ListNode head1 = new ListNode(-1);
         ListNode head2 = new ListNode(-1);
-        int[] a1 = new int[]{8, 6};
-        int[] a2 = new int[]{6,4, 8};
-        addTwoNumbers(utils.arr2list(a1), utils.arr2list(a2));
+        addTwoNumbers(utils.arr2list(8, 6), utils.arr2list(6,4, 8));
     }
 
 

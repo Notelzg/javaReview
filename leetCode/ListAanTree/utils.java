@@ -7,14 +7,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class utils {
-    public static int[] str2intArr(String str){
+    public static Integer[] str2intArr(String str){
         Objects.requireNonNull(str);
         Pattern pattern = Pattern.compile("\\d+");
         Matcher matcher = pattern.matcher(str);
         List<Integer> ans = new ArrayList<>();
         while (matcher.find())
             ans.add(Integer.parseInt(matcher.group()));
-        return ans.stream().mapToInt(i->i).toArray();
+        return ans.toArray(new Integer[ans.size()]);
 
     }
     public static int[] str2intArrArr(String str){
@@ -55,7 +55,7 @@ public class utils {
         listNode.next = circle;
         return head.next;
     }
-    public static  ListNode arr2list(int[] arr) {
+    public static  ListNode arr2list(Integer... arr) {
         ListNode head = new ListNode(-1);
         ListNode listNode = head;
         for (int i = 0; i < arr.length; i++) {
