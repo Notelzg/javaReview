@@ -11,6 +11,19 @@ public class utils {
         }
         System.out.println();
     }
+    public static  ListNode arr2listTail(int[] arr, int index) {
+        ListNode head = new ListNode(-1);
+        ListNode listNode = head;
+        ListNode circle  = null;
+        for (int i = 0; i < arr.length; i++) {
+            listNode.next = new ListNode(arr[i]);
+            listNode = listNode.next;
+            if (i == index)
+               circle =  listNode;
+        }
+        listNode.next = circle;
+        return head.next;
+    }
     public static  ListNode arr2list(int[] arr) {
         ListNode head = new ListNode(-1);
         ListNode listNode = head;
