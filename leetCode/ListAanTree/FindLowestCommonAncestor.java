@@ -28,7 +28,7 @@ public class FindLowestCommonAncestor {
 
     private boolean postOrder(TreeNode root) {
         if (null == root)
-            return false
+            return false;
         boolean left = postOrder(root.left);
         boolean right = postOrder(root.right);
         if (root == p || root == q) {
