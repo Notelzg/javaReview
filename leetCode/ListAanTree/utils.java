@@ -55,6 +55,19 @@ public class utils {
         listNode.next = circle;
         return head.next;
     }
+    public static  TreeNode arr2tree(Integer... arr) {
+        return createChild(arr, 0);
+    }
+    private static TreeNode createChild(Integer[] arr, int parentIndex){
+        TreeNode parent = new TreeNode(arr[parentIndex]);
+        int left = parentIndex * 2 + 1;
+        if (left < arr.length)
+            parent.left =  createChild(arr, left);
+        if (left  + 1 < arr.length)
+            parent.right =  createChild(arr, left + 1);
+        return parent;
+    }
+
     public static  ListNode arr2list(Integer... arr) {
         ListNode head = new ListNode(-1);
         ListNode listNode = head;
