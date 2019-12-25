@@ -13,7 +13,11 @@ import javax.swing.plaf.nimbus.AbstractRegionPainter;
  * 说明:
  * 所有节点的值都是唯一的。
  * p、q 为不同节点且均存在于给定的二叉树中。
- * 思路1， 使用后续遍历二叉树，如果p q已经被访问过， 则当前节点就是公共祖先
+ * 思路1，因为是找p q公共祖先，所以使用后序来处理，祖先后访问
+ * 如果node的 left right 已经遍历后发现命中了 p q，则证明node是最近的公共祖先，返回
+ * 因为存在 node本身等于 p或者q的，当这种情况出现时，把 left 或者 right中false 改为 true
+ * 因为如果left 或者 right 都为true则成功，如果只有一个为true，表明了node这颗子树本身命中了 p或者q
+ * 把结果返回给调用者就知道node子树，是处于left or right。
  */
 public class FindLowestCommonAncestor {
     private static boolean fp = false;
@@ -24,7 +28,7 @@ public class FindLowestCommonAncestor {
 
     private boolean postOrder(TreeNode root) {
         if (null == root)
-            return false;
+            return false
         boolean left = postOrder(root.left);
         boolean right = postOrder(root.right);
         if (root == p || root == q) {
@@ -33,7 +37,6 @@ public class FindLowestCommonAncestor {
             else
                 left = true;
         }
-        ;
         if (left && right) {
             ans = root;
             return false;
@@ -43,7 +46,8 @@ public class FindLowestCommonAncestor {
 
     /**
      * 思路1
-     *
+     * 空间复杂度 由于使用了成员变量，所以是 O(1)
+     * 时间复杂度是遍历所有的节点 O(n)
      * @param root
      * @param p
      * @param q
