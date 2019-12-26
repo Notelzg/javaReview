@@ -65,17 +65,5 @@ public class TreeZigzagLevelOrder {
         for (List<Integer> integers : zigzagLevelOrder(root)) {
             Assertions.assertArrayEquals(integers.toArray(new Integer[integers.size()]), an[i++]);
         }
-
-//         3
-//        / \
-//        9  20
-//          /  \
-//        15   7
-//        返回锯齿形层次遍历如下：
-//[
-//  [3],
-//  [20,9],
-//  [15,7]
-//]
     }
 }
