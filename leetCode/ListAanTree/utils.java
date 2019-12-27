@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 public class utils {
     public static Integer[] str2intArr(String str){
         Objects.requireNonNull(str);
-        Pattern pattern = Pattern.compile("\\d+");
+        Pattern pattern = Pattern.compile("-?\\d+");
         Matcher matcher = pattern.matcher(str);
         List<Integer> ans = new ArrayList<>();
         while (matcher.find())
@@ -17,23 +17,18 @@ public class utils {
         return ans.toArray(new Integer[ans.size()]);
 
     }
-    public static int[] str2intArrArr(String str){
+    public static int[][] str2intArrArr(String str){
         Pattern pattern = Pattern.compile("\\[.*]");
         Matcher matcher = pattern.matcher(str);
+        List<Integer[]> list = new ArrayList<>();
         while (matcher.find()){
-            System.out.println(matcher.start());
-            System.out.println(matcher.end());
-            System.out.println(matcher.group());
             String str2 =  str.substring(matcher.start() + 1, matcher.end() -1);
             Matcher matcher2 = pattern.matcher(str2);
             while (matcher2.find()) {
-                System.out.println(matcher2.start());
-                System.out.println(matcher2.end());
-                System.out.println(matcher2.group());
+                list.add(str2intArr(matcher2.group()));
             }
-
         }
-        return null;
+        return list.toArray(new int[list.size()][]);
     }
     public static void printList(ListNode head) {
         while (head != null) {
