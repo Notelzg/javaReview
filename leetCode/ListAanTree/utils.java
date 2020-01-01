@@ -1,13 +1,22 @@
 package ListAanTree;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class utils {
-    public static Integer[] str2intArr(String str){
+    public static int[] str2intArr(String str){
+        Integer[] arr = str2IntArr(str);
+        int[] ans = new int[arr.length];
+        for (int i = 0; i < ans.length; i++)
+            ans[i] = arr[i];
+        arr = null;
+        return  ans;
+    }
+    public static Integer[] str2IntArr(String str){
         Objects.requireNonNull(str);
         Pattern pattern = Pattern.compile("-?\\d+");
         Matcher matcher = pattern.matcher(str);
@@ -20,15 +29,23 @@ public class utils {
     public static int[][] str2intArrArr(String str){
         Pattern pattern = Pattern.compile("\\[.*]");
         Matcher matcher = pattern.matcher(str);
-        List<Integer[]> list = new ArrayList<>();
+        List<List<Integer>> list = new ArrayList<>();
         while (matcher.find()){
-            String str2 =  str.substring(matcher.start() + 1, matcher.end() -1);
-            Matcher matcher2 = pattern.matcher(str2);
-            while (matcher2.find()) {
-                list.add(str2intArr(matcher2.group()));
+            String[] str2 =  str.substring(matcher.start() + 1, matcher.end() -1).split("],");
+            for (int i = 0; i < str2.length; i++ ){
+                list.add(Arrays.asList(str2IntArr(str2[i])));
             }
         }
-        return list.toArray(new int[list.size()][]);
+        int[][] ans = new int[list.size()][list.get(0).size()];
+        int i = 0, j = 0;
+        for (List<Integer> list1 : list){
+            for (Integer key : list1) {
+                ans[i][j++] = key;
+            }
+            i++;
+            j = 0;
+        }
+        return ans;
     }
     public static void printList(ListNode head) {
         while (head != null) {

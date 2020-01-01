@@ -3,8 +3,6 @@ package ListAanTree;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.regex.Matcher;
-
 /**
   合并 k 个排序链表，返回合并后的排序链表。请分析和描述算法的复杂度。
   思路1, 暴力解法
@@ -78,7 +76,7 @@ public class MergerKSortedList {
         String[] strings = "1->4->5,1->3->4,2->6".split(",");
         ListNode[] ls = new ListNode[3];
         for (int i = 0; i < ls.length; i++)
-            ls[i] = utils.arr2list(utils.str2intArr(strings[i]));
-        Assertions.assertArrayEquals(utils.str2intArr("1->1->2->3->4->4->5->6"), utils.list2arr(mergeKLists(ls)));
+            ls[i] = utils.arr2list(utils.str2IntArr(strings[i]));
+        Assertions.assertArrayEquals(utils.str2IntArr("1->1->2->3->4->4->5->6"), utils.list2arr(mergeKLists(ls)));
     }
 }

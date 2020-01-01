@@ -49,10 +49,11 @@ public class MaxSquareArea {
      * 当前点的正方形，当前节点之前的点可以组成的正方形是可以求出来的，下一个节点
      * 依赖前一个节点。
      * dp[i][j] = Math.min(dp[i-1, j -1), dp[i-1][j], dp[i][j-1])
+     * 时间复杂度 O （m * n) , 空间复杂度 O（m * n)
      * @param matrix
      * @return
      */
-    public int maximalSquare(char[][] matrix) {
+    public int maximalSquareDy(char[][] matrix) {
         if (matrix == null || matrix.length == 0)
             return 0;
         int row = matrix.length + 1;
@@ -69,9 +70,50 @@ public class MaxSquareArea {
             }
         return max * max;
     }
+
+    /**
+     * 观察发现，只使用了, 上一行和左边的值，所以只需要存上一行和左边的值
+     * @param matrix
+     * @return
+     */
+    public int maximalSquare(char[][] matrix) {
+        if (matrix == null || matrix.length == 0)
+            return 0;
+        int row = matrix.length + 1;
+        int col = matrix[0].length + 1;
+        // 因为都是 i-1，所以长度加1，从1开始，因为 i =0时， 下标-1不存在，还要单独判断
+        int[] dp = new int[col];
+        int max = 0;
+        int pre = 0;
+        int temp;
+        for (int i = 1; i < row; i++) {
+            for (int j = 1; j < col; j++) {
+                // dp[j] 记录的第i-1行的值，下次循环作为pre使用，因为dp[j]下次循环
+                //的值是，dp[i][j-1]的值，
+                temp = dp[j];
+                if (matrix[i - 1][j - 1] == '1') {
+                    // dp[j] 覆盖了dp[i-1][j-1],存储的是 dp[i][j-1],所以需要prev 存储dp[i-1][j-1]
+                    dp[j] = (Math.min(pre, Math.min(dp[j - 1], dp[j]))) + 1;
+                    max = Math.max(max, dp[j]);
+                } else {
+                    //因为使用pre存储，左边的值，所以当当前节点为0时，当前节点正方形为0
+                    dp[j] = 0;
+                }
+                pre = temp;
+            }
+            pre = 0;
+        }
+        return max * max;
+    }
     @Test
     public void test(){
-        char[][] matrix = new char[][]{
+        char[][] matrix = new char[][] {
+        {'1','0','1','0'}
+        ,{'1','0','1','1'}
+        ,{'1','0','1','1'}
+        ,{'1','1','1','1'}};
+        Assertions.assertEquals(4, maximalSquare(matrix));
+         matrix = new char[][]{
          {'1' ,'0' ,'1' ,'0' ,'0'}
         ,{'1' ,'0' ,'1' ,'1' ,'1'}
         ,{'1' ,'1' ,'1' ,'1' ,'1'}
