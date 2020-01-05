@@ -2,13 +2,7 @@ package level_easy;
 
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Array;
 import java.util.*;
-import java.util.function.*;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
-import java.util.stream.Stream;
 
 /**
  * 给你个整数数组 arr，其中每个元素都 不相同。

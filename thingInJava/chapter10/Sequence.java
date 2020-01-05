@@ -1,6 +1,5 @@
 package chapter10;
 
-import java.lang.*;
 interface Selector{
 boolean end();
 Object current();

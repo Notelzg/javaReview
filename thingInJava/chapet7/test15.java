@@ -1,7 +1,5 @@
 package chapet7;
 
-import java.lang.*;
-
 class Person {
     private String name;
     protected final  void set(String name){

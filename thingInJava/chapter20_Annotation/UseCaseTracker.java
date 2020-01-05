@@ -4,7 +4,10 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 public class UseCaseTracker {
     public static void trackUseCase(List<Integer> usrACase, Class<?> cl){
         for (Method method : cl.getDeclaredMethods()){

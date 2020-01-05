@@ -43,7 +43,7 @@ public class StockMaxProfit {
      * 当 k = 2 时 ,每一天有四种转态，如下
      * dp[i][2][1] = max(dp[i-1][2][1], dp[i-1][1][0] - prices[i])
      * dp[i][2][0] = max(dp[i-1]2[0], dp[i-1][2][1] + prices[i])
-     * dp[i][1][1] = max(dp[i-1][1][1], dp[i-1][i-1][0] - prices[i])
+     * dp[i][1][1] = max(dp[i-1][1][1], dp[i-1][1-1=0][0] - prices[i])
      * dp[i][1][0] = max(dp[i-1][1][0], dp[i-1][1][1] + prices[i])
      * @param prices
      * @return

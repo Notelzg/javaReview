@@ -1,6 +1,5 @@
 package chapter10;
 
-import java.lang.*;
 import java.io.*;
 public class Prace17 {
     interface Wrapping {

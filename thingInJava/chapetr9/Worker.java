@@ -1,7 +1,7 @@
 package chapetr9;
 
 import java.io.*;
-import java.lang.*;
+
 interface UnderGraduate {
     int TEST = 0;
    void learn();

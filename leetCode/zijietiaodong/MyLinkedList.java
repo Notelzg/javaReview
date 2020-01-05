@@ -3,7 +3,6 @@ package zijietiaodong;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
-import java.util.Objects;
 
 public  class MyLinkedList {
     private class Node {

@@ -4,8 +4,6 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import static java.lang.ClassLoader.getSystemResourceAsStream;
-
 /**
  * 服务端接收一个字节码数组，然后使用自定义的加载器加载这个类，java的类和加载该类的加载器组合起来是一个类
  * 一个类由多个加载器加载，则表示多各类， 使用 instance 关键字返回结果是 false，所以每次调用execute方法

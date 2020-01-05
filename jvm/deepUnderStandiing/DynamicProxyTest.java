@@ -16,7 +16,7 @@ public class DynamicProxyTest {
         }
     }
 
-    static class DynamicProxy implements InvocationHandler{
+    static class DynamicProxy implements InvocationHandler {
         Object orignalObj;
         Object bind(Object orignalObj){
             this.orignalObj = orignalObj;
