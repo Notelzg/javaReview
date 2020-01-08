@@ -1,7 +1,7 @@
 package level_easy;
 
-import chapter20_Annotation.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.LruCache;
 
 import javax.xml.soap.Node;

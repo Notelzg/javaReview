@@ -107,6 +107,26 @@ public class SortList {
         return head;
     }
 
+    static class MyThread extends Thread{
+        private String name;
+
+        public MyThread(String name){
+            this.name = name;
+        }
+
+        @Override
+        public void run() {
+            System.out.println("name:"+name+" 子线程ID:"+Thread.currentThread().getId());
+        }
+    }
+
+    public static void main(String[] args)  {
+        System.out.println("主线程ID:"+Thread.currentThread().getId());
+        MyThread thread1 = new MyThread("thread1");
+        thread1.start();
+        MyThread thread2 = new MyThread("thread2");
+        thread2.run();
+    }
     @Test
     public void test() {
         Assertions.assertArrayEquals(new Integer[]{1, 2, 3, 4}, utils.list2arr(sortList(utils.arr2list(4, 2, 1, 3))));
