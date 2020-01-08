@@ -17,7 +17,9 @@ i1 == i2; return true
 “abc"本身是一个String类型的是一个对象
 0行 new关键字新建一个对象，对象指向 已有的“abc” 对象，所以如果加上”abc"
 就是新建两个对象，否则就是1个对象。
+jvm指令集 https://juejin.im/entry/588085221b69e60059035f0a
 ```
+
 Constant pool:
    #1 = Methodref          #8.#20         // java/lang/Object."<init>":()V
    #2 = Class              #21            // java/lang/String
