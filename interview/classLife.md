@@ -1,4 +1,6 @@
 # 分析java文件整个执行过程
+线程系统调用阻塞是否导致进程阻塞的问题
+https://blog.csdn.net/zxc024000/article/details/78972283
 ## java生成的class文件
 ## jvm进程启动过程
 ## class文件加载过程

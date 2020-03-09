@@ -85,6 +85,8 @@ public class utils {
     private static TreeNode createChild(Integer[] arr, int parentIndex) {
         if (null == arr || arr.length < 1 || parentIndex < 0 || parentIndex > arr.length - 1)
             return null;
+        if (arr[parentIndex] == null)
+            return null;
         TreeNode parent = new TreeNode(arr[parentIndex]);
         int left = parentIndex * 2 + 1;
         if (left < arr.length)

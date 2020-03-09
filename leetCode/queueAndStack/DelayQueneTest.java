@@ -1,6 +1,7 @@
 package queueAndStack;
 
 import org.junit.jupiter.api.Test;
+import sun.awt.windows.ThemeReader;
 
 import java.sql.Time;
 import java.util.concurrent.*;
@@ -84,11 +85,28 @@ public class DelayQueneTest {
         }
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws InterruptedException {
         DelayQueue<DelayedDTO> queue = new DelayQueue<>();
         Thread product = new Thread(new Product(queue));
         Thread custom = new Thread(new Consumer(queue));
+        product.join();
         custom.start();
         product.start();
+    }
+    @Test
+    public void test() throws InterruptedException {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("this is thread = " + Thread.currentThread().getName());
+            }
+        });
+        thread.start();
+        thread.join();
     }
 }

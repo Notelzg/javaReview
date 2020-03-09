@@ -2,16 +2,19 @@
 ## 2020.1.07, 滴滴二面技术
 ### 第一面
 主要是基础问题
+#### linux命令
+一个email文件
 #### 类加载过程
 String str = new String("abc");
 创建了几个对象
-String str2 = new String("abc");
-str2 == str? return false
-String str3 = "abc";
-String str4 = "abc";
-Integer i1 = new Integer(1);
-Integer i2 = new Integer(1);
-i1 == i2; return true
+```
+ String str = new String("abc");
+ String str2 = new String("abc");
+ System.out.println(str2 == str); //false
+ String str3 = "abc";
+ String str4 = "abc";
+ System.out.println(str3 == str4); // true
+```
 以上代码字节码文件如下
 4, 14 36 39, idc #3, #3是字符串常量池中的“abc”，
 “abc"本身是一个String类型的是一个对象
