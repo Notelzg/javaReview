@@ -23,7 +23,8 @@ innodb引擎控制，从而支持原子性，所以创建数据库语句可以�
 都是独立表空间，默认表表空间文件都存放在数据库名称对应的表里面
 ### binlog
 ```
- mysqlbinlog -vv binlog.000004  | grep mysql_test
+# mysqlbinlog -vv binlog.000002 | grep -10 mysql_research
+mysqlbinlog -vv binlog.000004  | grep mysql_test
 ```
 create database mysql_test DEFAULT CHARSET utf8 COLLATE utf8_general_ci
 binglog会记录所有数据库操作，从这里可以看到
