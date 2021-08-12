@@ -15,7 +15,7 @@ import java.util.stream.IntStream;
  */
 public class ThreeSum {
     public List<List<Integer>> threeSum(int[] nums) {
-        List<List<Integer>> ans = new ArrayList<>();
+        List<List<Integer>> ans = new ArrayList<List<Integer>>();
         if (nums.length < 3)
             return ans;
         // 排序

@@ -54,4 +54,10 @@ public class WP {
         Assertions.assertEquals(7, solution(4));
         System.out.println(solution(20));
     }
+    public static void f(){
+        System.out.println("this is test method");
+    }
+    public static void mian(String[] args){
+       WP wp = new WP();
+    }
 }

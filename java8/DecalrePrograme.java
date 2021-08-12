@@ -1,9 +1,9 @@
 import java.io.PrintStream;
+import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.function.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -13,6 +13,7 @@ import java.util.stream.IntStream;
  * 声明试编程
  */
 public class DecalrePrograme {
+    Proxy
 
     static  Logger logger =  Logger.getLogger(DecalrePrograme.class.getName());
     private interface A {
